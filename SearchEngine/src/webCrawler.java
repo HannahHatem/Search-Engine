@@ -18,7 +18,7 @@ import java.util.Scanner;
 
 public class webCrawler
 {
-	private static final int MAX_PAGES_TO_SEARCH = 5;
+	private static final int MAX_PAGES_TO_SEARCH = 10;
 	private static LinkedList <String> links= new LinkedList <String>();
 	private static HashSet <String> visitedLinks= new HashSet <String>();
 	private static HashSet <String> visitedStrings= new HashSet <String>();
@@ -39,6 +39,8 @@ public class webCrawler
 				myWriter = new FileWriter(input);
 	            myWriter.write(doc.toString());
 	            myWriter.close();
+	    		//System.out.println(myWriter);
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				synchronized (IDs) {
@@ -89,6 +91,25 @@ public class webCrawler
 
 		}
 		File visitedState = new File("State\\visitedLinks.txt");
+		synchronized (visitedLinks) 
+		{
+			try 
+			{
+				FileWriter myWriter=new FileWriter(visitedState);
+				Iterator<String> itr=visitedLinks.iterator();
+				for (int i = 0; i < visitedLinks.size(); i++) 
+				{
+					myWriter.write(itr.next() +"\n");
+				}
+				myWriter.close();
+			}catch (IOException e)
+			{
+					e.printStackTrace();
+			}
+
+		}
+		
+		visitedState = new File("Documents\\visitedLinks.txt");
 		synchronized (visitedLinks) 
 		{
 			try 
