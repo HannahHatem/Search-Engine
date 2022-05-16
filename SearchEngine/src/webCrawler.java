@@ -12,64 +12,122 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-public class webCrawler {
-
+public class webCrawler
+{
+	private static final int MAX_PAGES_TO_SEARCH = 5;
 	private static LinkedList <String> links= new LinkedList <String>();
 	private static HashSet <String> visitedLinks= new HashSet <String>();
+	private static HashSet <String> visitedStrings= new HashSet <String>();
 	private static LinkedList <Integer> IDs= new LinkedList <Integer>();
-
+	
+	
 	
 	private static void crawl(String url ,Integer id)
 	{	
-			
-			Document doc=request(url);
-			if(doc!=null)
-			{
-				File input = new File("Documents\\"+ (id / 500 + 1) +"\\"+id.toString()+".html");
-				FileWriter myWriter;
-				try {
-					myWriter = new FileWriter(input);
-		            myWriter.write(doc.toString());
-		            myWriter.close();
-				} catch (IOException e) {
-					
-					// TODO Auto-generated catch block
-					synchronized (IDs) {
-						IDs.addFirst(id);
-					}
-					e.printStackTrace();
-				}
-				Boolean robot;
-				for(Element link: doc.select("a[href]")) 
-				{
-					
-					String next_link=link.absUrl("href");
-					//=URL url=new URL(next_link);
-					try {
-						//robot=robotSafe(new URL(next_link));
-					} catch (Exception e) {
-						robot=false;
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					if(visitedLinks.contains(next_link)==false )
-					{
-						links.add(next_link);
-					}
-				}
-			}
-			else
-			{
+		Document doc=request(url);
+		//System.out.println(doc);
+		
+		if(doc!=null)
+		{
+			File input = new File("Documents\\"+ ((id / 500) + 1) +"\\"+id.toString()+".html");
+			FileWriter myWriter;
+			try {
+				myWriter = new FileWriter(input);
+	            myWriter.write(doc.toString());
+	            myWriter.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				synchronized (IDs) {
 					IDs.addFirst(id);
 				}
+				e.printStackTrace();
 			}
+			//Boolean robot;
+			for(Element link: doc.select("a[href]")) 
+			{
+				String next_link=link.absUrl("href");
+				/*=URL url=new URL(next_link);
+				try {
+					robot=robotSafe(new URL(next_link));
+				} catch (Exception e) {
+					robot=false;
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
+
+				if(visitedLinks.contains(next_link)==false )
+				{
+					links.add(next_link);
+
+				}
+			}
+		}
+		else
+		{
+			synchronized (IDs) {
+				IDs.addFirst(id);
+			}
+		}
+		
+		File linksState = new File("State\\links.txt");
+		synchronized (links) {
+			try {
+				FileWriter myWriter=new FileWriter(linksState);
+				for (int i = 0; i < links.size(); i++) 
+				{
+		            myWriter.write(links.get(i)+"\n");
+		            }
+				myWriter.close();
+				}catch (IOException e)
+			{
+					e.printStackTrace();
+				}
+
+		}
+		File visitedState = new File("State\\visitedLinks.txt");
+		synchronized (visitedLinks) 
+		{
+			try 
+			{
+				FileWriter myWriter=new FileWriter(visitedState);
+				Iterator<String> itr=visitedLinks.iterator();
+				for (int i = 0; i < visitedLinks.size(); i++) 
+				{
+					myWriter.write(itr.next() +"\n");
+				}
+				myWriter.close();
+			}catch (IOException e)
+			{
+					e.printStackTrace();
+			}
+
+		}
+		
+		File stringsState = new File("State\\visitedStrings.txt");
+		synchronized (visitedStrings) 
+		{
+			try 
+			{
+				FileWriter myWriter=new FileWriter(stringsState);
+				Iterator<String> itr=visitedStrings.iterator();
+				for (int i = 0; i < visitedStrings.size(); i++) 
+				{
+					myWriter.write(itr.next() +"\n");
+				}
+				myWriter.close();
+			}catch (IOException e)
+			{
+					e.printStackTrace();
+			}
+
+		}
+		
 	}
-	
+
 	private static Document request(String url)
 	{
 
@@ -80,9 +138,12 @@ public class webCrawler {
 				System.out.println("\n** Thread ID : "+Thread.currentThread().getName()+ " Received  webpage at " +url);
 				String title=doc.title();
 				System.out.println(title);
-				visitedLinks.add(url);
-				
-				return doc ;
+				String URLString=getURLString(doc);
+				if ( visitedStrings.contains(URLString)==false && visitedLinks.contains(url)==false) {
+					visitedStrings.add(URLString);
+					visitedLinks.add(url);
+					return doc ;
+				}
 			}
 			return null;
 			
@@ -94,12 +155,175 @@ public class webCrawler {
 	}
 	
 	
+	
+	
+	
+	
+	
+	private static String getURLString(Document doc)
+	{
+		
+		String toAppend="";
+		String URLString="";
+		Integer c=0;
+		
+		for(Element link: doc.select("div")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		
+		toAppend=c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("p")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("ul")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("h1")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("h2")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("h3")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("br")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("ol")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("dl")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		c=0;
+		
+		for(Element link: doc.select("article")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("button")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("input")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+		
+		c=0;
+		
+		for(Element link: doc.select("select")) 
+		{		
+			c++;
+			//System.out.println(c);
+
+		}
+		toAppend=toAppend+ c.toString();
+		//System.out.println(toAppend);
+
+		return toAppend;
+	}
+	
+
+	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner sc=new Scanner(System.in);  
 
 		int threadsNum=sc.nextInt();
-		File seedFile = new File("Links.txt");
+		File seedFile = new File("State\\links.txt");
+		if (!seedFile.exists()) {
+			seedFile = new File("Links.txt");
+		}
+		
 		Scanner URLScanner;
 		try {
 			
@@ -113,7 +337,39 @@ public class webCrawler {
 			e.printStackTrace();
 		}
       
-		for (int i = 0; i < 5500; i++) {
+		
+		File visited = new File("State\\visitedLinks.txt");
+		if (visited.exists()) {
+			try 
+			{	
+				URLScanner = new Scanner(visited);
+				while (URLScanner.hasNextLine()) {
+		            String currentURL = URLScanner.nextLine();
+		            visitedLinks.add(currentURL);
+		        }
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		visited = new File("State\\visitedStrings.txt");
+		if (visited.exists()) {
+			try 
+			{	
+				URLScanner = new Scanner(visited);
+				while (URLScanner.hasNextLine()) {
+		            String currentURL = URLScanner.nextLine();
+		            visitedStrings.add(currentURL);
+		        }
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+		for (int i = 0; i < 5000; i++) {
 			IDs.add(i);
 		}
 		Thread[] crawlerThreads = new Thread[threadsNum];
@@ -121,9 +377,8 @@ public class webCrawler {
 			{
 				
 				crawlerThreads[i] = new Thread(() -> 
-				{
-					
-					while(!links.isEmpty()&&!IDs.isEmpty()&& visitedLinks.size()<=10)
+				{	
+					while(!links.isEmpty()&&!IDs.isEmpty()&& visitedLinks.size()<=MAX_PAGES_TO_SEARCH)
 					{
 						int number;
 						String link;
@@ -138,7 +393,7 @@ public class webCrawler {
 						crawl(link,number);
 					}
 				});
-				crawlerThreads[i].setName(i.toString());
+				//crawlerThreads[i].setName(i.toString());
 
 				crawlerThreads[i].start();
 			}
@@ -151,92 +406,12 @@ public class webCrawler {
 					e.printStackTrace();
 				}
 			}
+			File linksState = new File("State\\links.txt");
+			linksState.delete();
+			File visitedState = new File("State\\visitedLinks.txt");
+			visitedState.delete();
+			File stringsState = new File("State\\visitedStrings.txt");
+			stringsState.delete();
+			
 		}
-		
-	
-/*	
-	
-	public static class RobotRule {
-        public String userAgent;
-        public String rule;
-
-        @Override
-        public String toString() {
-            StringBuilder result = new StringBuilder();
-            String NEW_LINE = System.getProperty("line.separator");
-            result.append(this.getClass().getName()).append(" Object {").append(NEW_LINE);
-            result.append("   userAgent: ").append(this.userAgent).append(NEW_LINE);
-            result.append("   rule: ").append(this.rule).append(NEW_LINE);
-            result.append("}");
-            return result.toString();
-        }
-    }
-
-    public static boolean robotSafe(URL url) {
-        String strHost = url.getHost();
-
-        String strRobot = "http://" + strHost + "/robots.txt";
-        URL urlRobot;
-        try {
-            urlRobot = new URL(strRobot);
-        } catch (MalformedURLException e) {
-            // something weird is happening, so don't trust it
-            return false;
-        }
-
-        StringBuilder strCommands;
-        try {
-            InputStream urlRobotStream = urlRobot.openStream();
-            byte[] b = new byte[1000];
-            int numRead;
-            strCommands = new StringBuilder("");
-            while (true) {
-                numRead = urlRobotStream.read(b);
-                if (numRead != -1) {
-                    String newCommands = new String(b, 0, numRead);
-                    strCommands.append(newCommands);
-                } else break;
-            }
-            urlRobotStream.close();
-        } catch (IOException e) {
-            return true; // if there is no robots.txt file, it is OK to search
-        }
-
-        if (strCommands.toString().toLowerCase().contains("disallow")) // if there are no "disallow" values, then they are not blocking anything.
-        {
-            String[] split = strCommands.toString().split("\n");
-            ArrayList<RobotRule> robotRules = new ArrayList<>();
-            String mostRecentUserAgent = null;
-            for (String s : split) {
-                String line = s.trim();
-                if (line.toLowerCase().startsWith("user-agent")) {
-                    int start = line.indexOf(":") + 1;
-                    int end = line.length();
-                    mostRecentUserAgent = line.substring(start, end).trim();
-                } else if (line.toLowerCase().startsWith("disallow")) {
-                    if (mostRecentUserAgent != null) {
-                        RobotRule r = new RobotRule();
-                        r.userAgent = mostRecentUserAgent;
-                        int start = line.indexOf(":") + 1;
-                        int end = line.length();
-                        r.rule = line.substring(start, end).trim();
-                        robotRules.add(r);
-                    }
-                }
-            }
-
-            for (RobotRule robotRule : robotRules) {
-                String path = url.getPath();
-                if (robotRule.rule.length() == 0) return true; // allows everything if BLANK
-                if (robotRule.rule.equals("/")) return false;       // allows nothing if /
-
-                if (robotRule.rule.length() <= path.length()) {
-                    String pathCompare = path.substring(0, robotRule.rule.length());
-                    if (pathCompare.equals(robotRule.rule)) return false;
-                }
-            }
-        }
-        return true;
-    }	*/
-
-}
+	}
