@@ -10,11 +10,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
+
+import Database.DatabaseUtils;
 
 public class webCrawler
 {
@@ -23,16 +26,24 @@ public class webCrawler
 	private static HashSet <String> visitedLinks= new HashSet <String>();
 	private static HashSet <String> visitedStrings= new HashSet <String>();
 	private static LinkedList <Integer> IDs= new LinkedList <Integer>();
+	static DatabaseUtils db;
 	
 	
 	
-	private static void crawl(String url ,Integer id)
+	private static void crawl(String url ,Integer id) 
 	{	
 		Document doc=request(url);
 		//System.out.println(doc);
-		
+
 		if(doc!=null)
 		{
+			try {
+				db.insertCrawledLink(url);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				System.out.println("webCrawler can't insert in db");
+				e1.printStackTrace();
+			}
 			File input = new File("Documents\\"+ ((id / 500) + 1) +"\\"+id.toString()+".html");
 			FileWriter myWriter;
 			try {
@@ -335,10 +346,17 @@ public class webCrawler
 
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args)  {
 		// TODO Auto-generated method stub
 		Scanner sc=new Scanner(System.in);  
-
+		db = new DatabaseUtils();
+		try {
+			db.connectToDB();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		int threadsNum=sc.nextInt();
 		File seedFile = new File("State\\links.txt");
 		if (!seedFile.exists()) {

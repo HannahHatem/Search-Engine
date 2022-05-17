@@ -1,14 +1,18 @@
 package Indexer;
 
 import java.io.*;
+import java.util.Scanner;
 import java.util.Vector;
+
+import Database.DatabaseUtils;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class ReadFiles {
 
 	static Vector<String> arrFiles = new Vector<String>();
-	
+	static DatabaseUtils db;
 	static void PrintFile(String fileName) throws Exception
     {         
            BufferedReader br = new BufferedReader(new FileReader("./input/"+fileName));
@@ -17,6 +21,29 @@ public class ReadFiles {
 	             System.out.println(st);
 	         br.close();
     }
+	
+	static void ReadFile()
+	{
+		File visited = new File("Links.txt");
+		if (visited.exists()) {
+			try 
+			{	
+				Scanner URLScanner = new Scanner(visited);
+				while (URLScanner.hasNextLine()) {
+		            String currentURL = URLScanner.nextLine();
+		            try {
+						db.insertCrawledLink(currentURL);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        }
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	static void ReadFolder()
 	{
@@ -50,7 +77,15 @@ public class ReadFiles {
 	}
 	public static void main(String args[])
 	{
-		ReadFolder();
-		System.out.println(arrFiles.get(1));
+		//ReadFolder();
+		db = new DatabaseUtils();
+		try {
+			db.connectToDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ReadFile();
+		
 	}
 }

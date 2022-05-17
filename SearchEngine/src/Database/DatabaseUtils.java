@@ -42,7 +42,7 @@ public class DatabaseUtils {
     public void createTestTable() throws SQLException {
         try {
         	stmt = c.createStatement();    
-            String CreateSql = "Create Table Dummy(id int primary key, nameH varchar, address text) ";
+            String CreateSql = "Create Table Dummy2(id int primary key, nameH varchar, address text) ";
             stmt.executeUpdate(CreateSql);
             stmt.close();
             c.close();
@@ -52,11 +52,42 @@ public class DatabaseUtils {
 
         }
     }
+
+    public void createCrawledLinksTable() throws SQLException {
+        try {
+        	stmt = c.createStatement();    
+            String CreateSql = "Create Table crawled_links("
+            		+ "id serial,"
+            		+ "url text primary key, "
+            		+ "is_visited boolean default false"
+            		+ ");";
+            stmt.executeUpdate(CreateSql);
+            System.out.println("Table crawled_links successfully created");
+
+        }catch (Exception e){
+        	 System.out.println("Table failed crawled_links to be Created.");
+
+        }
+    }
+
+    public void insertCrawledLink(String url) throws Exception {
+        try {
+        	stmt = c.createStatement();    
+            String CreateSql = "Insert INTO crawled_links(url) VALUES ('"+url+"');";
+            stmt.executeUpdate(CreateSql);
+
+        }catch (Exception e){
+        	 System.out.println("Failed to insert link in Table");
+
+        }
+    }
+
     
     public static void main(String[] args) throws Exception {
         // Connect to the database
     	DatabaseUtils db = new DatabaseUtils();
         db.connectToDB();
-        db.createTestTable();
+        db.createCrawledLinksTable();
+        db.insertCrawledLink("https://abcnews.go.com/");
     }
 }
