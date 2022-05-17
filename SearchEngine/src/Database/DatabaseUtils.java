@@ -81,13 +81,29 @@ public class DatabaseUtils {
 
         }
     }
-
     
+    public List getCrawledLinks() throws Exception {
+
+        	stmt = c.createStatement();    
+            String CreateSql = "Select url from crawled_links where is_visited = false;";
+            //stmt.executeUpdate(CreateSql);
+            ResultSet rs = stmt.executeQuery(CreateSql);
+            List l = new ArrayList();
+            while (rs.next()) {
+                l.add(rs.getString("url"));
+                //System.out.println(rs.getString("url"));
+            }
+            System.out.println(l.size());
+            return l;
+    }
+
+        
     public static void main(String[] args) throws Exception {
         // Connect to the database
     	DatabaseUtils db = new DatabaseUtils();
         db.connectToDB();
-        db.createCrawledLinksTable();
-        db.insertCrawledLink("https://abcnews.go.com/");
+        //db.createCrawledLinksTable();
+        //db.insertCrawledLink("https://abcnews.go.com/");
+        db.getCrawledLinks();
     }
 }
