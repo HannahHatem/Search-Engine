@@ -83,7 +83,6 @@ public class IndexerThreads implements Runnable {
 
 	private void stemming(Elements contentBlocks, String url) {
 		Hashtable<String, WordIndexer> hashDoc = new Hashtable<>();
-		// PorterStemmer porterStemmer = new PorterStemmer();
 		int url_id = -1;
 		int docSize = 0;
 		Stemmer myStemmer = new Stemmer();
@@ -106,7 +105,7 @@ public class IndexerThreads implements Runnable {
 			for (String word : words) {
 				if (word == "" || word == " ")
 					continue;
-				String stem =  myStemmer.stemTheWord(word);   //word; // porterStemmer.stem(word);
+				String stem =  myStemmer.stemTheWord(word);  
 				docSize++;
 				if (hashDoc.containsKey(stem)) {
 					WordIndexer w = hashDoc.get(stem);
@@ -150,8 +149,8 @@ public class IndexerThreads implements Runnable {
 		}
         int i = 1;
 		hashDoc.entrySet().forEach(entry -> {
-			System.out.println(
-					entry.getKey() + "->" + entry.getValue().docURL + " , count= " + entry.getValue().countPerDoc);
+//			System.out.println(
+//					entry.getKey() + "->" + entry.getValue().docURL + " , count= " + entry.getValue().countPerDoc);
 			try {
 				db.insertWordIndexer(entry.getValue(), i);
 			} catch (Exception e) {
