@@ -106,7 +106,20 @@ public class DatabaseUtils {
 
         }
     }
-    
+
+    public void createPopularityTable() throws SQLException {
+        try {
+        	stmt = c.createStatement();    
+            String CreateSql = "Create Table popularity(parent_url_id int references crawled_links(url_id) PRIMARY KEY, url_id int references crawled_links(url_id), Unique(parent_url_id, url_id));";
+            stmt.executeUpdate(CreateSql);
+            System.out.println("Table popularity successfully created");
+
+        }catch (Exception e){
+        	 System.out.println("Table failed popularity to be Created.");
+
+        }
+    }
+   
     public void insertCrawledLink(String url) throws Exception {
         try {
         	stmt = c.createStatement();    
@@ -115,6 +128,18 @@ public class DatabaseUtils {
 
         }catch (Exception e){
         	 System.out.println("Failed to insert link in Table");
+
+        }
+    }
+    
+    public void insertPopularity(int pId, int urlId) throws Exception {
+        try {
+        	stmt = c.createStatement();    
+            String CreateSql = "INSERT INTO popularity(parent_url_id, url_id) VALUES ("+pId+","+ urlId+");";
+            stmt.executeUpdate(CreateSql);
+
+        }catch (Exception e){
+        	 System.out.println("Failed to insert in Popularity Table");
 
         }
     }
@@ -226,7 +251,8 @@ public class DatabaseUtils {
 //        db.createCrawledLinksTable();
 //        db.createWordIdTable();
 //        db.createWordIndexerTable();
-        db.createWordIndecesTable();
+//        db.createWordIndecesTable();
+        db.createPopularityTable();
 //        db.insertCrawledLink("https://abcnews.go.com/");
 //        db.getCrawledLinks();
 //        db.setIsVisistedLink(2);

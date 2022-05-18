@@ -155,6 +155,26 @@ public class IndexerThreads implements Runnable {
 				e.printStackTrace();
 			}
 		});
+		
+		Connection con= Jsoup.connect(url);
+        Document doc=con.get();
+		for(Element link: doc.select("a[href]")) 
+        {
+			int child_id = -1;
+            String next_link=link.absUrl("href");
+            try {
+				child_id = db.getUrlId(next_link);
+				db.insertPopularity(url_id, child_id);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//            if(visitedLinks.contains(next_link)==false )
+//            {
+//                links.add(next_link);
+//            }
+        }
+	
 	}
 
 	@Override
