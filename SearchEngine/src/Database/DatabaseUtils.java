@@ -94,10 +94,10 @@ public class DatabaseUtils {
         }
     }
     
-    public void createWordIndeciesTable() throws SQLException {
+    public void createWordIndecesTable() throws SQLException {
         try {
         	stmt = c.createStatement();    
-            String CreateSql = "Create Table word_indicies(word_id int references word_id(id), url_id int references crawled_links(url_id), index int, Primary Key(word_id,url_id, index));";
+            String CreateSql = "Create Table word_indices(word_id int references word_id(id), url_id int references crawled_links(url_id), index int, Primary Key(word_id,url_id, index));";
             stmt.executeUpdate(CreateSql);
             System.out.println("Table word_indicies successfully created");
 
@@ -212,7 +212,7 @@ public class DatabaseUtils {
 //        db.createCrawledLinksTable();
 //        db.createWordIdTable();
 //        db.createWordIndexerTable();
-        db.createWordIndeciesTable();
+        db.createWordIndecesTable();
 //        db.insertCrawledLink("https://abcnews.go.com/");
 //        db.getCrawledLinks();
 //        db.setIsVisistedLink(2);

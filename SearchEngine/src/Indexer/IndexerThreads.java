@@ -38,21 +38,10 @@ public class IndexerThreads implements Runnable {
 		try {
 			Connection con = Jsoup.connect(url);
 			Document doc = con.get();
-//			if (con.response().statusCode()==200) {
-//				System.out.println(doc);
-//			    return doc ;
-//				}
-
 			Connection.Response resp = con.execute();
 			if (resp.statusCode() == 200) {
-
-//	            String HTMLSTring = doc.toString();
-//	            Document html = Jsoup.parse(HTMLSTring);
-
 				Elements ParagraphsOnPage = doc.select("p, h0,h1,h2,h3,h4,h5,h6,title, body");
-
 				return ParagraphsOnPage;
-
 			}
 
 			return null;
