@@ -110,7 +110,7 @@ public class DatabaseUtils {
     public void createPopularityTable() throws SQLException {
         try {
         	stmt = c.createStatement();    
-            String CreateSql = "Create Table popularity(parent_url_id int references crawled_links(url_id) PRIMARY KEY, url_id int references crawled_links(url_id), Unique(parent_url_id, url_id));";
+            String CreateSql = "Create Table popularity(parent_url_id int references crawled_links(url_id), url_id int references crawled_links(url_id), PRIMARY KEY(parent_url_id, url_id));";
             stmt.executeUpdate(CreateSql);
             System.out.println("Table popularity successfully created");
 
