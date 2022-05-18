@@ -1,6 +1,4 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const { pool, client } = require("./db");
+const { client } = require("./db");
 const natural = require("natural");
 
 const queryProcessing = async (searchWord) => {
@@ -35,11 +33,10 @@ const queryProcessing = async (searchWord) => {
       throw err;
     });
 
-  //group wordIndexes by word_id
   const wordIndexesGrouped = wordIndexes.reduce((group, index) => {
-    const { word_id } = index;
-    group[word_id] = group[word_id] || [];
-    group[word_id].push(index);
+    const { url_id } = index;
+    group[url_id] = group[url_id] || [];
+    group[url_id].push(index);
     return group;
   }, {});
 
