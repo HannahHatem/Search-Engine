@@ -38,6 +38,7 @@ public class ReadFiles {
 						e.printStackTrace();
 					}
 		        }
+				URLScanner.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

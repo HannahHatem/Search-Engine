@@ -186,12 +186,6 @@ public class webCrawler
 
 	}
 	
-	
-	
-	
-	
-	
-	
 	private static String getURLString(Document doc)
 	{
 		
@@ -342,9 +336,6 @@ public class webCrawler
 
 		return toAppend;
 	}
-	
-
-	
 	
 	public static void main(String[] args)  {
 		// TODO Auto-generated method stub
