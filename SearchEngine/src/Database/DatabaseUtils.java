@@ -205,6 +205,20 @@ public class DatabaseUtils {
         	 System.out.println("Failed to set is_visited url");
         }
     }
+    
+    public void insertWordIndices(int word_id, int url_id, int index)throws Exception {
+        try {
+        	stmt = c.createStatement();    
+            String CreateSql = "INSERT INTO public.word_indices("
+            		+ "	word_id, url_id, index)"
+            		+ "	VALUES ("+word_id+","+ url_id+","+ index+");";
+            stmt.executeUpdate(CreateSql);
+
+        }catch (Exception e){
+        	 System.out.println("Failed to insert in worde_indices Table");
+        }
+    }
+    
     public static void main(String[] args) throws Exception {
         // Connect to the database
     	DatabaseUtils db = new DatabaseUtils();

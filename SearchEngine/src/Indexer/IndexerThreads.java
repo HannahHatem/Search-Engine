@@ -74,6 +74,7 @@ public class IndexerThreads implements Runnable {
 		Hashtable<String, WordIndexer> hashDoc = new Hashtable<>();
 		int url_id = -1;
 		int docSize = 0;
+		int index = 0;
 		Stemmer myStemmer = new Stemmer();
 		try {
 			url_id = db.getUrlId(url);
@@ -103,14 +104,21 @@ public class IndexerThreads implements Runnable {
 					whichTag(lineTag, w);
 					w.docSize = words.length;
 					hashDoc.put(stem, w);
+					try {
+						db.insertWordIndices(w.wordId, url_id, index);
+						index++;
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
 				} else {
 					WordIndexer w = new WordIndexer();
 					try {
 						db.insertWord(stem);
 						int id = db.getWordId(stem);
 						w.wordId = id;
+						db.insertWordIndices(w.wordId, url_id, index);
+						index++;
 						System.out.println(id);
-						//w.docSize = docSize;
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
