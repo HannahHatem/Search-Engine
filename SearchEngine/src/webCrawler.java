@@ -21,7 +21,7 @@ import Database.DatabaseUtils;
 
 public class webCrawler
 {
-	private static final int MAX_PAGES_TO_SEARCH = 1;
+	private static final int MAX_PAGES_TO_SEARCH = 10;
 	private static LinkedList <String> links= new LinkedList <String>();
 	private static HashSet <String> visitedLinks= new HashSet <String>();
 	private static HashSet <String> visitedStrings= new HashSet <String>();
@@ -33,7 +33,7 @@ public class webCrawler
 	private static void crawl(String url ,Integer id) 
 	{	
 		Document doc=request(url);
-		System.out.println(doc);
+		//System.out.println(doc);
 
 		if(doc!=null)
 		{

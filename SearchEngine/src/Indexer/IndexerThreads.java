@@ -38,21 +38,10 @@ public class IndexerThreads implements Runnable {
 		try {
 			Connection con = Jsoup.connect(url);
 			Document doc = con.get();
-//			if (con.response().statusCode()==200) {
-//				System.out.println(doc);
-//			    return doc ;
-//				}
-
 			Connection.Response resp = con.execute();
 			if (resp.statusCode() == 200) {
-
-//	            String HTMLSTring = doc.toString();
-//	            Document html = Jsoup.parse(HTMLSTring);
-
 				Elements ParagraphsOnPage = doc.select("p, h0,h1,h2,h3,h4,h5,h6,title, body");
-
 				return ParagraphsOnPage;
-
 			}
 
 			return null;
@@ -83,8 +72,16 @@ public class IndexerThreads implements Runnable {
 
 	private void stemming(Elements contentBlocks, String url) {
 		Hashtable<String, WordIndexer> hashDoc = new Hashtable<>();
-		// PorterStemmer porterStemmer = new PorterStemmer();
-
+		int url_id = -1;
+		int docSize = 0;
+		int index = 0;
+		Stemmer myStemmer = new Stemmer();
+		try {
+			url_id = db.getUrlId(url);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		for (Element line : contentBlocks) {
 			String lineString = line.text();
 			System.out.println("first line = " + lineString);
@@ -98,7 +95,8 @@ public class IndexerThreads implements Runnable {
 			for (String word : words) {
 				if (word == "" || word == " ")
 					continue;
-				String stem = word; // porterStemmer.stem(word);
+				String stem =  myStemmer.stemTheWord(word);  
+				docSize++;
 				if (hashDoc.containsKey(stem)) {
 					WordIndexer w = hashDoc.get(stem);
 					w.TF++;
@@ -106,12 +104,20 @@ public class IndexerThreads implements Runnable {
 					whichTag(lineTag, w);
 					w.docSize = words.length;
 					hashDoc.put(stem, w);
+					try {
+						db.insertWordIndices(w.wordId, url_id, index);
+						index++;
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
 				} else {
 					WordIndexer w = new WordIndexer();
 					try {
 						db.insertWord(stem);
 						int id = db.getWordId(stem);
 						w.wordId = id;
+						db.insertWordIndices(w.wordId, url_id, index);
+						index++;
 						System.out.println(id);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -122,7 +128,7 @@ public class IndexerThreads implements Runnable {
 					w.countPerDoc++;
 					w.docSize = words.length;
 					 try {
-						w.docID = db.getUrlId(url);
+						w.docID = url_id;
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -132,10 +138,16 @@ public class IndexerThreads implements Runnable {
 				}
 			}
 		}
-		int i = 1;
+        try {
+			db.setIsVisistedLink(url_id);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        int i = 1;
 		hashDoc.entrySet().forEach(entry -> {
-			System.out.println(
-					entry.getKey() + "->" + entry.getValue().docURL + " , count= " + entry.getValue().countPerDoc);
+//			System.out.println(
+//					entry.getKey() + "->" + entry.getValue().docURL + " , count= " + entry.getValue().countPerDoc);
 			try {
 				db.insertWordIndexer(entry.getValue(), i);
 			} catch (Exception e) {
@@ -154,6 +166,7 @@ public class IndexerThreads implements Runnable {
 			try {
 				int startIndex = docPerThread * (threadName - 1);
 				int endIndex = threadName == N ? crawledLinksList.size() : startIndex + docPerThread;
+				System.out.println(crawledLinksList.size());
 				for (int i = startIndex; i < endIndex; i++) {
 					Elements contentBlocks = getDoc(crawledLinksList.get(i));
 					if (contentBlocks != null) {
