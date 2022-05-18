@@ -84,7 +84,7 @@ public class IndexerThreads implements Runnable {
 		}
 		for (Element line : contentBlocks) {
 			String lineString = line.text();
-			System.out.println("first line = " + lineString);
+			//System.out.println("first line = " + lineString);
 			String lineTag = line.tagName();
 			lineString = lineString.toLowerCase().replaceAll(stopWords, " ");
 			lineString = lineString.replaceAll("\\p{Punct}", " ");
@@ -155,6 +155,39 @@ public class IndexerThreads implements Runnable {
 				e.printStackTrace();
 			}
 		});
+		
+		Connection con= Jsoup.connect(url);
+        Document doc = null;
+        int parent_id = -1;
+		try {
+			doc = con.get();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			parent_id = db.getUrlId(url);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		for(Element link: doc.select("a[href]")) 
+        {
+			int child_id = -1;
+            String next_link=link.absUrl("href");
+            try {
+				child_id = db.getUrlId(next_link);
+				System.out.println("pId---->" + parent_id+" childId --------> "+ child_id);
+				db.insertPopularity(parent_id, child_id);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//            if(visitedLinks.contains(next_link)==false )
+//            {
+//                links.add(next_link);
+//            }
+        }
+	
 	}
 
 	@Override
