@@ -119,7 +119,6 @@ public class DatabaseUtils {
                 id = rs.getInt(1);
             }
             return id;
-
         }catch (Exception e){
         	 System.out.println("Failed to insert link in Table");
         	 return -1;
@@ -169,10 +168,10 @@ public class DatabaseUtils {
         // Connect to the database
     	DatabaseUtils db = new DatabaseUtils();
         db.connectToDB();
-        //db.createCrawledLinksTable();
-        //db.insertCrawledLink("https://abcnews.go.com/");
-        //db.getCrawledLinks();
-        //db.createWordIdTable();
-        //db.createWordIndexerTable();
+        db.createCrawledLinksTable();
+//        db.insertCrawledLink("https://abcnews.go.com/");
+//        db.getCrawledLinks();
+        db.createWordIdTable();
+        db.createWordIndexerTable();
     }
 }
