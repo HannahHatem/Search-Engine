@@ -1,0 +1,77 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.homeHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  align-items: center;
+}
+
+.homeHeader a {
+  margin-right: 20px;
+  text-decoration: inherit;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 15px;
+}
+.homeHeader a:hover {
+  text-decoration: underline;
+}
+
+.homeHeaderLeft{
+
+}
+
+.homeHeaderRight {
+    display: flex;
+    align-items: center;
+    min-width: 13vw;
+    justify-content: space-between;
+}
+.homeHeaderRight > 	.MuiIcon-root {
+margin-right: 20px;
+}
+
+.homeBody {
+    flex:1;
+    display: flex;
+    margin-top: 5%;
+    flex-direction: column;
+}
+
+.homeBody > img{
+    object-fit: contain;
+   margin-left: 35%;
+   width:30%;
+    height:30%;
+
+}
+
+.homeInputContainer{
+    margin-left: 31%;
+}
+
+.homeIconsContainer{
+    margin-left: 38%;
+    margin-top: 2%;
+    display: flex;
+}
+.homeIconsContainer a{
+color: black;
+}
+.circularDiv{
+    margin-left: 2%;
+    margin-right: 3%;
+    border-radius: 20%;
+    background-color: #d9edea;
+    padding: 1%;
+    cursor: pointer;
+}
+
+.circularIcon{
+    size: 40px;
+}
+

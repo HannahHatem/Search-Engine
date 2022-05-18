@@ -1,0 +1,29 @@
+.searchInput {
+  display: flex;
+  align-items: center;
+  border: 1px solid lightgray;
+  height: 30px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  width: 75vw;
+  margin-top: 40px;
+  max-width: 560px;
+}
+
+.searchInput > input {
+  flex: 1;
+  padding: 10px 20px;
+  font-size: medium;
+  border: none;
+}
+.searchInput > input:focus {
+  outline-width: 0;
+}
+
+.searchInputIcon {
+  color: #50c5a8;
+}
+.inputButton {
+  border: none;
+  background-color: transparent;
+}
