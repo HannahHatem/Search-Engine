@@ -372,12 +372,14 @@ public class Stemmer {
 	              }
 	              if (ch < 0) break;
 	              System.out.print((char)ch);
+				  in.close();
 	           }
 	         }
 	         catch (IOException e)
 	         {  System.out.println("error reading " + args[i]);
 	            break;
 	         }
+
 	      }
 	      catch (FileNotFoundException e)
 	      {  System.out.println("file " + args[i] + " not found");
