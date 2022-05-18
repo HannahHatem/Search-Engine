@@ -133,13 +133,13 @@ public class DatabaseUtils {
             stmt.executeUpdate(CreateSql);
 
         }catch (Exception e){
-        	 System.out.println("Failed to insert link in Table");
+        	 System.out.println("Failed to insert wordID in Table");
         }
     }
-    public void insertWordIndexer(WordIndexer w) throws Exception {
+    public void insertWordIndexer(WordIndexer w, int i) throws Exception {
         try {
         	stmt = c.createStatement();    
-            String CreateSql = "Insert INTO crawled_links(word_id, url_id, count, tf, h1, h2, h3, h4, h5, h6, title, body, score) "
+            String CreateSql = "Insert INTO word_indexer(word_id, url_id, count, tf, h1, h2, h3, h4, h5, h6, title, body, score) "
             		+ "VALUES ("+w.wordId+", 2,"+ w.countPerDoc+","+w.TF+","+ w.h1+","+ w.h2+","+w.h3+","+ w.h4+","+ w.h5+","+ w.h6+","+ w.title+","+ w.body+", 0);";
             stmt.executeUpdate(CreateSql);
 

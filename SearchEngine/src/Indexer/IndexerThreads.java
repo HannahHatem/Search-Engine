@@ -131,10 +131,11 @@ public class IndexerThreads  implements Runnable{
 					}
 				}
 			}
+			int i = 1;
 			hashDoc.entrySet().forEach(entry -> {
 	            System.out.println(entry.getKey() + "->" + entry.getValue().docURL+" , count= "+entry.getValue().countPerDoc);
 	            try {
-					db.insertWordIndexer(entry.getValue());
+					db.insertWordIndexer(entry.getValue(), i);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
