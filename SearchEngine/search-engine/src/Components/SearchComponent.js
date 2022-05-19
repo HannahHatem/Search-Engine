@@ -15,6 +15,7 @@ function SearchComponent(props) {
   const history = useHistory();
   const search = (e) => {
     e.preventDefault();
+    props.onChangeSearch();
     history.push({ pathname: "/search", state: searchValue });
   };
   return (

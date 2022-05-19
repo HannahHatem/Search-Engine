@@ -14,8 +14,13 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import logo3 from '../Assets/logo3.png'
 import SearchComponent from '../Components/SearchComponent';
 
-
+let count;
 function Home() {
+  const onSearch=() => {
+    let count=localStorage.getItem('count');
+    localStorage.setItem('count',parseInt(count)+1);
+  };
+  localStorage.setItem('count', 0);
   return (
 
     <div className={`${classes.home}`}>
@@ -36,7 +41,7 @@ function Home() {
       <div className={`${classes.homeBody}`}>
         <img src={logo3} alt="" />
         <div className={`${classes.homeInputContainer}`}>
-          <SearchComponent searchValue={""} searchPage={false}/>
+          <SearchComponent searchValue={""} searchPage={false} onChangeSearch={onSearch}/>
         </div>
         <div className={`${classes.homeIconsContainer}`}>
           <div className={`${classes.circularDiv}`}>
