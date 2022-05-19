@@ -47,7 +47,7 @@ router.get("/search", readData, async (req, res) => {
         description: data.description,
       });
     }
-    return res.status(200).send({ data: urlsInfo });
+    return res.status(200).send({ data: urlData });
   } catch (err) {
     return res.status(500).send({ error: err.toString() });
   }
