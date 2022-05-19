@@ -15,10 +15,13 @@ import logo3 from '../Assets/logo3.png'
 import SearchComponent from '../Components/SearchComponent';
 
 let count;
+
 function Home() {
   const onSearch=() => {
+
     let count=localStorage.getItem('count');
     localStorage.setItem('count',parseInt(count)+1);
+
   };
   localStorage.setItem('count', 0);
   return (
