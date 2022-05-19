@@ -18,7 +18,7 @@ public class DatabaseUtils {
 
 	private Connection c = null;
     private Statement  stmt = null;
-    final private String password = "hannah@sk21";
+    final private String password = "1234567890";
     //final private String database = "search_engine";
 
     public void connectToDB() throws Exception {
@@ -248,14 +248,11 @@ public class DatabaseUtils {
         // Connect to the database
     	DatabaseUtils db = new DatabaseUtils();
         db.connectToDB();
-//        db.createCrawledLinksTable();
-//        db.createWordIdTable();
-//        db.createWordIndexerTable();
-//        db.createWordIndecesTable();
+        db.createCrawledLinksTable();
+        db.createWordIdTable();
+        db.createWordIndexerTable();
+        db.createWordIndecesTable();
         db.createPopularityTable();
-//        db.insertCrawledLink("https://abcnews.go.com/");
-//        db.getCrawledLinks();
-//        db.setIsVisistedLink(2);
         
     }
 }
