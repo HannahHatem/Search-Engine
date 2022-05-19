@@ -8,7 +8,7 @@ const ranker = require("./ranker");
 const readData = require("./middleware");
 const { getLinkPreview } = require("link-preview-js");
 
-router.get("/search/:page/:count", readData, async (req, res) => {
+router.get("/search", readData, async (req, res) => {
   try {
     const searchWord = req.query.q;
     const documentsInfo = await queryProcessing(searchWord);
@@ -17,16 +17,8 @@ router.get("/search/:page/:count", readData, async (req, res) => {
       req.documentsCount,
       req.wordDocumentCount
     );
-
-    const page = req.params.page != null ? req.params.page : 1;
-    const count = req.params.count != null ? req.params.count : 5;
-
-    const start = (page - 1) * count;
-    const end = page * count;
-    const slicedDocs = sortedDocs.slice(start, end);
-
-    const urls = slicedDocs.map((doc) => doc.urlId);
-
+    console.log(sortedDocs);
+    const urls = sortedDocs.map((doc) => doc.urlId);
     const query = `SELECT * FROM crawled_links WHERE url_id IN (${urls
       .map((url) => `'${url}'`)
       .join(",")})`;
@@ -43,21 +35,21 @@ router.get("/search/:page/:count", readData, async (req, res) => {
       .catch((err) => {
         throw err;
       });
-
     const urlData = [];
 
     for (let i = 0; i < urlsInfo.length; i++) {
-      const data = await getLinkPreview(urlsInfo[i].url);
+      const data = getLinkPreview(urlsInfo[i].url).catch((err)=>{
+        console.log(err.toString());
+      });
       urlData.push({
         url: urlsInfo[i].url,
         title: data.title,
         description: data.description,
       });
     }
-
-    return res.status(200).send({ data: urlData });
+    return res.status(200).send({ data: urlsInfo });
   } catch (err) {
-    return res.status(500).send({ error: err.status });
+    return res.status(500).send({ error: err.toString() });
   }
 });
 
