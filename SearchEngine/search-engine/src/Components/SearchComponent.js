@@ -9,8 +9,11 @@ import SpeechRecognition, {
 import { useHistory } from "react-router-dom";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import instance from "./axios";
+import { useLocation } from "react-router-dom";
 
 function SearchComponent(props) {
+  const location = useLocation();
+
   const { transcript, resetTranscript } = useSpeechRecognition();
   // const [searchValue, setSearchValue] = useState(props.searchValue);
   const [searchValue, setSearchValue] = useState("");
@@ -28,10 +31,12 @@ function SearchComponent(props) {
   const search = (e) => {
     e.preventDefault();
     console.log("Printing ", searchValue);
-    // history.push({
-    //   pathname: "/search",
-    //   state: searchValue,
-    // });
+    let inHome = location.pathname;
+    if (inHome === "/")
+      history.push({
+        pathname: "/search",
+        state: [  searchValue,  "home" ],
+      });
     props.onChangeSearch(searchValue);
   };
 

@@ -110,12 +110,11 @@ const DUMMY_RESULTS = [
 
 function Search(props) {
   const { state } = props.location;
-  // console.log(state);
+  console.log(state);
   const [results, setResults] = useState([]);
-  const [searchInput, setSearchInput] = useState(state);
-  // console.log("")
+  const [searchInput, setSearchInput] = useState(state[0]);
   const [searchResults, setSearchResults] = useState([]);
-
+  let checkHome=state;
   // useEffect(() => {console.log(state)}, [])
   const onSearch = (val) => {
     console.log("Sending request", val);
@@ -136,6 +135,11 @@ function Search(props) {
     let count = localStorage.getItem("count");
     localStorage.setItem("count", parseInt(count) + 1);
   };
+
+  if(checkHome[1]==="home"){
+    checkHome[1]="";
+    onSearch(searchInput);
+  }
 
   return (
     <div className={"searchPage"}>
