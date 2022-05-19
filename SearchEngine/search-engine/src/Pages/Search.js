@@ -112,10 +112,10 @@ function Search(props) {
   const [results, setResults] = useState([]);
   const [searchInput, setSearchInput] = useState(state);
   const [searchResults, setSearchResults] = useState(DUMMY_RESULTS);
-  console.log(state);
-  useEffect(() => {
-    console.log(searchInput);
-  }, [state]);
+  const onSearch=() => {
+    let count=localStorage.getItem('count');
+    localStorage.setItem('count',parseInt(count)+1);
+  };
   return (
     <div className={"searchPage"}>
       <div className={`searchPageHeader `}>
@@ -123,7 +123,7 @@ function Search(props) {
           <img className="imageLogo" src={logo3} alt="" />
         </Link>
         <div className="searchBar">
-          <SearchComponent searchPage={true} searchValue={state} />
+          <SearchComponent onChangeSearch={onSearch} searchPage={true} searchValue={state} />
           <div className="searchPage_options">
             <div className="searchPage_optionsLeft">
               <div className="searchPage_option">
