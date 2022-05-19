@@ -8,10 +8,11 @@ const {
   h5Weight,
   h6Weight,
   bodyWeight,
+  graphWeight,
 } = require("./../config");
 const { user } = require("pg/lib/defaults");
 
-const calculateRelevance = async (
+const calculateScores = async (
   documentsInfo,
   documentsSize,
   wordDocumentSize
@@ -21,6 +22,8 @@ const calculateRelevance = async (
     const wordDocumentCount = wordDocumentSize;
     const urlScores = {};
     const urlIds = Object.keys(documentsInfo);
+    const webRank = await calculateRank(urlIds);
+
     for (let i = 0; i < urlIds.length; i++) {
       const urlId = urlIds[i];
       const urlinfos = documentsInfo[urlId];
@@ -60,10 +63,11 @@ const calculateRelevance = async (
           h4Relevance +
           h5Relevance +
           h6Relevance +
-          bodyRelevance;
+          bodyRelevance +
+          TF_IDF;
         relevance += totalRelevance;
       }
-      urlScores[urlId] = relevance;
+      urlScores[urlId] =  relevance + webRank[urlId];
     }
     //sort urlScores by descending order according to score
     const sortedUrlScores = Object.keys(urlScores)
@@ -80,4 +84,20 @@ const calculateRelevance = async (
   }
 };
 
-module.exports = calculateRelevance;
+const calculateRank = async (urlIds) => {
+  const webGraph = {};
+  for (let i = 0; i < urlIds.length; i++) {
+    const urlId = urlIds[i];
+    const query = `SELECT parent_url_id FROM popularity WHERE url_id = '${urlId}'`;
+    await client.query(query).then((result) => {
+      const urlParents = result.rows.map((row) => {
+        return row.parent_url_id;
+      });
+      webGraph[urlId] = urlParents.length * graphWeight;
+    });
+  }
+  console.log(webGraph);
+  return webGraph;
+};
+
+module.exports = calculateScores;
