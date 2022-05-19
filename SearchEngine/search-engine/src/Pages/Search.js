@@ -114,21 +114,21 @@ function Search(props) {
   const [results, setResults] = useState([]);
   const [searchInput, setSearchInput] = useState(state[0]);
   const [searchResults, setSearchResults] = useState([]);
-  let checkHome=state;
+  let checkHome = state;
   // useEffect(() => {console.log(state)}, [])
   const onSearch = (val) => {
     console.log("Sending request", val);
     try {
-     instance
-       .get(`/search/?q=${val}`)
-       .then((res) => {
-         console.log(res.data, "res");
-         setSearchResults(res.data.data);
-         setResults(res.data.data);
-       })
-       .catch((err) => {
-         console.log(err);
-       });
+      instance
+        .get(`/search/?q=${val}`)
+        .then((res) => {
+          console.log(res.data, "res");
+          setSearchResults(res.data.data);
+          setResults(res.data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (err) {
       console.log(err);
     }
@@ -136,8 +136,8 @@ function Search(props) {
     localStorage.setItem("count", parseInt(count) + 1);
   };
 
-  if(checkHome[1]==="home"){
-    checkHome[1]="";
+  if (checkHome[1] === "home") {
+    checkHome[1] = "";
     onSearch(searchInput);
   }
 
@@ -197,25 +197,34 @@ function Search(props) {
             return (
               <div className="searchPage_result">
                 <div className="searchPage_resultTitle">
-                  {/* <a href={result.url}>{result.title}</a> */}
+                  <a href={result.url}>{result.title}</a>
                 </div>
                 <div className="searchPage_resultLink">
                   <a href={result.url}>{result.url}</a>
                 </div>
                 <div className="searchPage_resultSnippet">
-                  {/* {result.description} */}
+                  {result.description}
                 </div>
               </div>
             );
           })}
         </div>
       )}
-      {searchResults.length>0 && <AppPagination
-        documents={searchResults}
-        setResults={(r) => {
-          setResults(r);
-        }}
-      />}
+      {searchResults.length !== 0 && (
+        <AppPagination
+          documents={searchResults}
+          setResults={(r) => {
+            setResults(r);
+          }}
+        />
+      )}
+      {/* {searchResults.length === 0 && (
+        <div className="searchPage_noResults">
+          <div className="searchPage_noResultsTitle">
+            No results found for {searchInput}
+          </div>
+        </div>
+      )} */}
     </div>
   );
 }

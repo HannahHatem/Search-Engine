@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Pagination from "@mui/material/Pagination";
 
-const pageSize = 4;
+const pageSize = 20;
 function AppPagination(props) {
   const [pagination, setPagination] = useState({
     count: 0,
