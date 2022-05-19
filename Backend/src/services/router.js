@@ -7,6 +7,7 @@ const queryProcessing = require("./queryProcessing");
 const ranker = require("./ranker");
 const readData = require("./middleware");
 const { getLinkPreview } = require("link-preview-js");
+const { parser } = require("html-metadata-parser");
 
 router.get("/search", readData, async (req, res) => {
   try {
@@ -38,9 +39,7 @@ router.get("/search", readData, async (req, res) => {
     const urlData = [];
 
     for (let i = 0; i < urlsInfo.length; i++) {
-      const data = getLinkPreview(urlsInfo[i].url).catch((err)=>{
-        console.log(err.toString());
-      });
+      const data = await parse(urlsInfo[i].url);
       urlData.push({
         url: urlsInfo[i].url,
         title: data.title,

@@ -71,13 +71,14 @@ const calculateScores = async (
     }
     //sort urlScores by descending order according to score
     const sortedUrlScores = Object.keys(urlScores)
-      .sort((a, b) => urlScores[b] - urlScores[a])
+      .sort((a, b) => urlScores[b] > urlScores[a])
       .map((urlId) => {
         return {
           urlId,
           score: urlScores[urlId],
         };
       });
+      console.log(sortedUrlScores);
     return sortedUrlScores;
   } catch (err) {
     throw err;
@@ -96,7 +97,6 @@ const calculateRank = async (urlIds) => {
       webGraph[urlId] = urlParents.length * graphWeight;
     });
   }
-  console.log(webGraph);
   return webGraph;
 };
 
