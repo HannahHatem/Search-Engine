@@ -12,6 +12,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import RoomIcon from "@mui/icons-material/Room";
 import logo3 from "../Assets/logo3.png";
 import AppPagination from "../Pagination/AppPagination";
+import instance from "../Components/axios";
 
 const DUMMY_RESULTS = [
   {
@@ -109,13 +110,37 @@ const DUMMY_RESULTS = [
 
 function Search(props) {
   const { state } = props.location;
+  console.log(state);
   const [results, setResults] = useState([]);
-  const [searchInput, setSearchInput] = useState(state);
-  const [searchResults, setSearchResults] = useState(DUMMY_RESULTS);
-  const onSearch=() => {
-    let count=localStorage.getItem('count');
-    localStorage.setItem('count',parseInt(count)+1);
+  const [searchInput, setSearchInput] = useState(state[0]);
+  const [searchResults, setSearchResults] = useState([]);
+  let checkHome=state;
+  // useEffect(() => {console.log(state)}, [])
+  const onSearch = (val) => {
+    console.log("Sending request", val);
+    try {
+     instance
+       .get(`/search/?q=${val}`)
+       .then((res) => {
+         console.log(res.data, "res");
+         setSearchResults(res.data.data);
+         setResults(res.data.data);
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+    } catch (err) {
+      console.log(err);
+    }
+    let count = localStorage.getItem("count");
+    localStorage.setItem("count", parseInt(count) + 1);
   };
+
+  if(checkHome[1]==="home"){
+    checkHome[1]="";
+    onSearch(searchInput);
+  }
+
   return (
     <div className={"searchPage"}>
       <div className={`searchPageHeader `}>
@@ -123,7 +148,11 @@ function Search(props) {
           <img className="imageLogo" src={logo3} alt="" />
         </Link>
         <div className="searchBar">
-          <SearchComponent onChangeSearch={onSearch} searchPage={true} searchValue={state} />
+          <SearchComponent
+            onChangeSearch={onSearch}
+            searchPage={true}
+            searchValue={searchInput}
+          />
           <div className="searchPage_options">
             <div className="searchPage_optionsLeft">
               <div className="searchPage_option">
@@ -162,26 +191,31 @@ function Search(props) {
           </div>
         </div>
       </div>
-      {results.length!==0 && (
+      {results.length !== 0 && (
         <div className="searchPage_results">
           {results.map((result) => {
             return (
               <div className="searchPage_result">
                 <div className="searchPage_resultTitle">
-                  <a href={result.link}>{result.title}</a>
+                  {/* <a href={result.url}>{result.title}</a> */}
                 </div>
                 <div className="searchPage_resultLink">
-                  <a href={result.link}>{result.link}</a>
+                  <a href={result.url}>{result.url}</a>
                 </div>
-                <div className="searchPage_resultSnippet">{result.snippet}</div>
+                <div className="searchPage_resultSnippet">
+                  {/* {result.description} */}
+                </div>
               </div>
             );
           })}
-          
         </div>
-        
       )}
-      <AppPagination documents={searchResults} setResults={(r)=>{setResults(r)}}/>
+      {searchResults.length>0 && <AppPagination
+        documents={searchResults}
+        setResults={(r) => {
+          setResults(r);
+        }}
+      />}
     </div>
   );
 }

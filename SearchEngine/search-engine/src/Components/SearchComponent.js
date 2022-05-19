@@ -8,84 +8,38 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import { useHistory } from "react-router-dom";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
+import instance from "./axios";
+import { useLocation } from "react-router-dom";
 
 function SearchComponent(props) {
+  const location = useLocation();
+
   const { transcript, resetTranscript } = useSpeechRecognition();
-  const [searchValue, setSearchValue] = useState(props.searchValue);
+  // const [searchValue, setSearchValue] = useState(props.searchValue);
+  const [searchValue, setSearchValue] = useState("");
   const [startListening, setStartListening] = useState(false);
   const history = useHistory();
-// for auto complete
-const [searchString, setSearchString] = useState("");
+  // for auto complete
+  const [searchString, setSearchString] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
+  const sleep = (milli) => {
+    return new Promise((resolve) => setTimeout(resolve, milli));
+  };
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-const handleOnSearch = (string, results) => {
-  console.log(string, results);
-  setSearchString(string);
-};
-
-const handleOnClear = () => {
-  console.log("Cleared");
-  // setSearchString("");
-  let items =  [] ;
-  let toBesuggested = [] ;
-  
-     let inLocal;
-     let count=localStorage.getItem('count');
-     if (localStorage.getItem("items") !== null) {
-       inLocal = localStorage.getItem("items");
-       console.log(inLocal);
-       items = JSON.parse(inLocal);
-     }
-     
-     items.push({count,searchValue});
-     localStorage.setItem("items", JSON.stringify(items));
-    //  e.preventDefault();
-     props.onChangeSearch();
-     let c=parseInt(count);
-     items.forEach((item) => {
-       toBesuggested.push({id:c,name: item.searchValue});
-       c++;
-     })
-     console.log(toBesuggested,"sugg");
-     localStorage.setItem("itemss", JSON.stringify(toBesuggested));
-     if(props.searchPage===false)
-      setSearchValue("");
- 
-     history.push({ pathname: "/search", state: searchValue });
-};
-
-const clearSearchBox = () => {
-  setSearchString("");
-};
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   const search = (e) => {
-    let items =  [] ;
-    let toBesuggested = [] ;
-    let inLocal;
-    let count=localStorage.getItem('count');
-    if (localStorage.getItem("items") !== null) {
-      inLocal = localStorage.getItem("items");
-      console.log(inLocal);
-      items = JSON.parse(inLocal);
-    }
-    
-    items.push({count,searchValue});
-    localStorage.setItem("items", JSON.stringify(items));
+  const search = (e) => {
     e.preventDefault();
-    props.onChangeSearch();
-    let c=0;
-    items.forEach((item) => {
-      toBesuggested.push({id:"c",name: item.searchValue});
-      c++;
-    })
-    console.log(toBesuggested,"sugg");
-    localStorage.setItem("itemss", JSON.stringify(toBesuggested));
+    console.log("Printing ", searchValue);
+    let inHome = location.pathname;
+    if (inHome === "/")
+      history.push({
+        pathname: "/search",
+        state: [  searchValue,  "home" ],
+      });
+    props.onChangeSearch(searchValue);
+  };
 
-
-    history.push({ pathname: "/search", state: searchValue });
-   };
   return (
     <form className={`search`}>
       <div className={`searchInput`}>
@@ -114,7 +68,7 @@ const clearSearchBox = () => {
         />
       </div>
       <div>
-      {/* <ReactSearchAutocomplete
+        {/* <ReactSearchAutocomplete
             items={JSON.parse(localStorage.getItem("itemss"))?JSON.parse(localStorage.getItem("itemss")):[]}
             onSearch={handleOnSearch}
             onClear={handleOnClear}
@@ -127,7 +81,9 @@ const clearSearchBox = () => {
           className={`${classes.inputButton}`}
           type="submit"
           onClick={search}
-        ></button>
+        >
+          Click me
+        </button>
       </div>
     </form>
   );

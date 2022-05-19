@@ -93,6 +93,26 @@ public class webCrawler {
 			}
 
 		}
+
+		File idsState = new File("State\\IDs.txt");
+		synchronized (IDs) {
+			try {
+				FileWriter myWriter = new FileWriter(idsState);
+				for (int i = 0; i < IDs.size(); i++) {
+					try {
+						myWriter.write(IDs.get(i) + "\n");
+					} catch (Exception e1) {
+						myWriter.close();
+						break;
+					}
+				}
+				myWriter.close();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+
+		}
 		File visitedState = new File("State\\visitedLinks.txt");
 		synchronized (visitedLinks) {
 			try {
@@ -360,8 +380,24 @@ public class webCrawler {
 			}
 		}
 
-		for (int i = 0; i < 5000; i++) {
-			IDs.add(i);
+		File ids = new File("State\\IDs.txt");
+		if (ids.exists()) {
+			try {
+				URLScanner = new Scanner(ids);
+				while (URLScanner.hasNextLine()) {
+					Integer currenID = URLScanner.nextInt();
+					IDs.add(currenID);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				System.out.println(e);
+				e.printStackTrace();
+			}
+		} else {
+
+			for (int i = 0; i < 5000; i++) {
+				IDs.add(i);
+			}
 		}
 		Thread[] crawlerThreads = new Thread[threadsNum];
 		for (Integer i = 0; i < threadsNum; i++) {
@@ -399,6 +435,9 @@ public class webCrawler {
 		visitedState.delete();
 		File stringsState = new File("State\\visitedStrings.txt");
 		stringsState.delete();
+		File idState = new File("State\\IDs.txt");
+		idState.delete();
+
 
 	}
 }

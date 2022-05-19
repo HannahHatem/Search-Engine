@@ -6,3 +6,4 @@ exports.h4Weight = 6;
 exports.h5Weight = 5;
 exports.h6Weight = 4;
 exports.bodyWeight = 2;
+exports.graphWeight  = 0.5;
