@@ -71,7 +71,7 @@ const calculateScores = async (
     }
     //sort urlScores by descending order according to score
     const sortedUrlScores = Object.keys(urlScores)
-      .sort((a, b) => urlScores[b] > urlScores[a])
+      .sort((a, b) => urlScores[b] - urlScores[a])
       .map((urlId) => {
         return {
           urlId,

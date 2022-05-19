@@ -39,7 +39,9 @@ router.get("/search", readData, async (req, res) => {
     const urlData = [];
 
     for (let i = 0; i < urlsInfo.length; i++) {
-      const data = await parse(urlsInfo[i].url);
+      const data = parser(urlsInfo[i].url).then((data) => {
+        return data;
+      });
       urlData.push({
         url: urlsInfo[i].url,
         title: data.title,
