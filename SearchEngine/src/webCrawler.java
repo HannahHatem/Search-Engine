@@ -82,6 +82,7 @@ public class webCrawler {
 					try {
 						myWriter.write(links.get(i) + "\n");
 					} catch (Exception e1) {
+						myWriter.close();
 						break;
 					}
 				}
